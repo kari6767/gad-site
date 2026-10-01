@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GAD — индивидуальные чехлы на iPhone</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#0d0d10; --surface:#17171c; --surface2:#1f1f26;
+    --border:#2a2a33; --text:#f5f5f7; --muted:#9a9aa5;
+    --pink:#ff8fb1; --pink2:#e85d8a; --cream:#fff5ee;
+  }
+  html{scroll-behavior:smooth}
+  body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+  .container{max-width:1200px;margin:0 auto;padding:0 24px}
+
+  /* HEADER */
+  header{position:sticky;top:0;z-index:100;background:rgba(13,13,16,.8);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+  .nav{display:flex;justify-content:space-between;align-items:center;padding:18px 0}
+  .logo{font-weight:900;font-size:1.5rem;letter-spacing:.15em;display:flex;align-items:center;gap:10px}
+  .logo-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--pink),var(--pink2));display:grid;place-items:center;font-size:.9rem;font-weight:900;color:#fff}
+  nav ul{display:flex;gap:30px;list-style:none}
+  nav a{color:var(--muted);text-decoration:none;font-size:.93rem;transition:color .2s}
+  nav a:hover{color:var(--text)}
+
+  .btn{display:inline-block;padding:13px 30px;background:linear-gradient(135deg,var(--pink),var(--pink2));color:#fff;text-decoration:none;border-radius:100px;font-weight:600;font-size:.95rem;border:none;cursor:pointer;transition:transform .2s,box-shadow .2s;font-family:inherit}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 14px 32px -10px rgba(232,93,138,.6)}
+  .btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text)}
+  .btn-ghost:hover{border-color:var(--pink);box-shadow:none}
+  .btn-sm{padding:9px 20px;font-size:.85rem}
+
+  /* HERO */
+  .hero{padding:90px 0 70px;position:relative;overflow:hidden}
+  .hero::before{content:'';position:absolute;top:-250px;right:-200px;width:700px;height:700px;background:radial-gradient(circle,rgba(255,143,177,.18),transparent 65%);pointer-events:none}
+  .hero-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:60px;align-items:center;position:relative}
+  .badge{display:inline-block;padding:7px 16px;background:var(--surface);border:1px solid var(--border);border-radius:100px;font-size:.82rem;color:var(--muted);margin-bottom:22px}
+  .badge span{color:var(--pink)}
+  h1{font-size:clamp(2.2rem,5vw,3.9rem);line-height:1.05;letter-spacing:-.03em;font-weight:900;margin-bottom:22px}
+  h1 em{font-style:normal;background:linear-gradient(135deg,var(--pink),var(--pink2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .hero p{font-size:1.1rem;color:var(--muted);margin-bottom:34px;max-width:480px}
+  .hero-actions{display:flex;gap:12px;flex-wrap:wrap}
+
+  .hero-visual{aspect-ratio:1;background:var(--surface);border:1px solid var(--border);border-radius:28px;position:relative;display:grid;place-items:center;overflow:hidden}
+  .hero-visual::after{content:'📱';font-size:9rem;filter:drop-shadow(0 24px 50px rgba(255,143,177,.45))}
+
+  /* SECTIONS */
+  section{padding:80px 0}
+  .section-title{font-size:clamp(1.8rem,3.5vw,2.6rem);letter-spacing:-.02em;font-weight:900;margin-bottom:14px}
+  .section-sub{color:var(--muted);max-width:600px;margin-bottom:50px;font-size:1.05rem}
+
+  /* GALLERY */
+  .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}
+  .g-item{aspect-ratio:3/4;border-radius:20px;overflow:hidden;background:var(--surface);border:1px solid var(--border);position:relative;cursor:pointer;transition:transform .3s,border-color .3s}
+  .g-item:hover{transform:translateY(-6px);border-color:var(--pink)}
+  .g-item img{width:100%;height:100%;object-fit:cover;display:block}
+  .g-item::after{content:attr(data-label);position:absolute;left:16px;bottom:14px;font-size:.82rem;font-weight:600;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);padding:6px 12px;border-radius:100px;color:#fff}
+
+  /* DESIGNER */
+  .designer{background:var(--surface);border:1px solid var(--border);border-radius:28px;padding:44px;display:grid;grid-template-columns:1fr 1.15fr;gap:50px;align-items:start}
+  .preview-wrap{display:flex;flex-direction:column;align-items:center;gap:20px;position:sticky;top:100px}
+
+  .phone-case{width:100%;max-width:280px;aspect-ratio:1/2.03;border-radius:44px;position:relative;overflow:hidden;background:#fff;box-shadow:0 30px 60px -20px rgba(0,0,0,.7),0 0 0 1px var(--border),inset 0 0 0 3px rgba(255,255,255,.4);transition:background .25s}
+  .case-layer{position:absolute;inset:0;background-size:cover;background-position:center;transition:opacity .25s}
+  .case-photo{opacity:0}
+  .case-photo.on{opacity:1}
+  .case-text{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:36px;text-align:center;font-size:26px;font-weight:700;word-break:break-word;line-height:1.1;pointer-events:none;transform:rotate(-8deg)}
+
+  .camera{position:absolute;top:14px;left:14px;width:38%;aspect-ratio:1;background:rgba(0,0,0,.85);border-radius:22px;padding:9px;display:grid;grid-template-columns:1fr 1fr;gap:6px;z-index:5;border:1px solid rgba(255,255,255,.15)}
+  .cam-lens{background:radial-gradient(circle at 35% 35%,#333,#000 70%);border-radius:50%;border:1px solid rgba(255,255,255,.25)}
+  .cam-lens:nth-child(3){grid-column:2;grid-row:1}
+
+  /* Controls */
+  .ctrl-group{margin-bottom:26px}
+  .ctrl-label{font-size:.8rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:12px;font-weight:600}
+  .swatches{display:flex;gap:10px;flex-wrap:wrap}
+  .swatch{width:36px;height:36px;border-radius:50%;border:2px solid var(--border);cursor:pointer;transition:transform .15s,border-color .2s;position:relative}
+  .swatch:hover{transform:scale(1.1)}
+  .swatch.active{border-color:var(--pink);box-shadow:0 0 0 3px rgba(255,143,177,.25)}
+
+  .prints{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .print{padding:12px 8px;background:var(--bg);border:1px solid var(--border);border-radius:12px;cursor:pointer;text-align:center;font-size:.8rem;color:var(--muted);transition:all .2s;font-family:inherit}
+  .print:hover{border-color:var(--pink)}
+  .print.active{border-color:var(--pink);color:var(--text);background:rgba(255,143,177,.08)}
+
+  .file-input{display:none}
+  .file-btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;background:var(--bg);border:1px dashed var(--border);border-radius:12px;cursor:pointer;color:var(--muted);font-size:.9rem;transition:all .2s;font-family:inherit;width:100%}
+  .file-btn:hover{border-color:var(--pink);color:var(--text)}
+
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .txt-input,.sel{width:100%;padding:12px 14px;background:var(--bg);border:1px solid var(--border);border-radius:11px;color:var(--text);font-family:inherit;font-size:.92rem;transition:border-color .2s}
+  .txt-input:focus,.sel:focus{outline:none;border-color:var(--pink)}
+
+  .fonts{display:flex;gap:8px}
+  .font-btn{flex:1;padding:10px;background:var(--bg);border:1px solid var(--border);border-radius:11px;color:var(--text);cursor:pointer;font-size:.9rem;transition:all .2s;font-family:inherit}
+  .font-btn.active{border-color:var(--pink);background:rgba(255,143,177,.08)}
+
+  .price-row{display:flex;justify-content:space-between;align-items:center;padding:20px 0;border-top:1px solid var(--border);margin-top:8px}
+  .price-row span{color:var(--muted);font-size:.9rem}
+  .price{font-size:1.8rem;font-weight:900;background:linear-gradient(135deg,var(--pink),var(--pink2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+
+  /* FEATURES */
+  .features{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}
+  .feature{padding:30px;background:var(--surface);border:1px solid var(--border);border-radius:20px;transition:transform .25s,border-color .25s}
+  .feature:hover{transform:translateY(-4px);border-color:rgba(255,143,177,.4)}
+  .feature-icon{width:46px;height:46px;border-radius:12px;background:linear-gradient(135deg,rgba(255,143,177,.15),rgba(232,93,138,.15));display:grid;place-items:center;font-size:1.4rem;margin-bottom:18px}
+  .feature h3{font-size:1.08rem;margin-bottom:8px;font-weight:700}
+  .feature p{color:var(--muted);font-size:.93rem}
+
+  /* ORDER FORM */
+  .order-grid{display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:start}
+  form.order-form{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:32px;display:grid;gap:16px}
+  form.order-form .btn{width:100%;padding:16px}
+  label{font-size:.85rem;color:var(--muted);display:block;margin-bottom:7px}
+  input,select,textarea{width:100%;padding:13px 15px;background:var(--bg);border:1px solid var(--border);border-radius:12px;color:var(--text);font-family:inherit;font-size:.93rem;transition:border-color .2s}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--pink)}
+  textarea{resize:vertical;min-height:90px}
+
+  .contact-info{display:grid;gap:16px}
+  .contact-item{padding:20px;border-left:2px solid var(--pink);background:var(--surface);border-radius:0 12px 12px 0}
+  .contact-item small{color:var(--muted);font-size:.83rem}
+  .contact-item div{font-size:1.03rem;font-weight:600;margin-top:4px}
+
+  /* FOOTER */
+  footer{border-top:1px solid var(--border);padding:36px 0;color:var(--muted);font-size:.9rem;text-align:center}
+
+  /* MOBILE */
+  @media(max-width:900px){
+    .hero-grid,.designer,.order-grid{grid-template-columns:1fr;gap:36px}
+    nav ul{display:none}
+    section{padding:60px 0}
+    .hero{padding:60px 0 40px}
+    .designer{padding:26px}
+    .preview-wrap{position:static}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container nav">
+    <div class="logo"><span class="logo-mark">G</span>GAD</div>
+    <nav>
+      <ul>
+        <li><a href="#gallery">Работы</a></li>
+        <li><a href="#designer">Конструктор</a></li>
+        <li><a href="#order">Заказать</a></li>
+      </ul>
+    </nav>
+    <a href="#designer" class="btn btn-sm">Создать чехол</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <div class="badge">✦ <span>GAD</span> — чехлы ручной сборки</div>
+      <h1>Чехол, который <em>существует в одном экземпляре</em></h1>
+      <p>Собери свой дизайн прямо на сайте: цвет, принт, фото и надпись. Мы напечатаем и отправим в течение 3 дней.</p>
+      <div class="hero-actions">
+        <a href="#designer" class="btn">Собрать чехол</a>
+        <a href="#gallery" class="btn btn-ghost">Посмотреть работы</a>
+      </div>
+    </div>
+    <div class="hero-visual"></div>
+  </div>
+</section>
+
+<!-- ГАЛЕРЕЯ -->
+<section id="gallery">
+  <div class="container">
+    <h2 class="section-title">Наши работы</h2>
+    <p class="section-sub">Каждый чехол — отдельная история. Меняй принт, цвет, добавляй фото и текст.</p>
+    <div class="gallery">
+      <div class="g-item" data-label="Iconic · чёрный"><img src="images/1.jpg" alt=""></div>
+      <div class="g-item" data-label="Pink eyes"><img src="images/2.jpg" alt=""></div>
+      <div class="g-item" data-label="Kittens box"><img src="images/3.jpg" alt=""></div>
+      <div class="g-item" data-label="Lucky"><img src="images/4.jpg" alt=""></div>
+      <div class="g-item" data-label="Iconic · pink"><img src="images/5.jpg" alt=""></div>
+      <div class="g-item" data-label="Leo × flowers"><img src="images/6.jpg" alt=""></div>
+    </div>
+  </div>
+</section>
+
+<!-- КОНСТРУКТОР -->
+<section id="designer">
+  <div class="container">
+    <h2 class="section-title">Студия дизайна</h2>
+    <p class="section-sub">Собери чехол своей мечты — результат увидишь сразу.</p>
+
+    <div class="designer">
+      <!-- PREVIEW -->
+      <div class="preview-wrap">
+        <div class="phone-case" id="casePreview">
+          <div class="case-layer" id="caseBg"></div>
+          <div class="case-layer case-photo" id="casePhoto"></div>
+          <div class="case-text" id="caseText"></div>
+          <div class="camera">
+            <div class="cam-lens"></div>
+            <div class="cam-lens"></div>
+            <div class="cam-lens"></div>
+          </div>
+        </div>
+        <div style="color:var(--muted);font-size:.85rem">Предпросмотр iPhone 15 Pro</div>
+      </div>
+
+      <!-- CONTROLS -->
+      <div>
+        <div class="ctrl-group">
+          <div class="ctrl-label">Цвет основы</div>
+          <div class="swatches" id="swatches"></div>
+        </div>
+
+        <div class="ctrl-group">
+          <div class="ctrl-label">Принт</div>
+          <div class="prints" id="prints"></div>
+        </div>
+
+        <div class="ctrl-group">
+          <div class="ctrl-label">Фото</div>
+          <input type="file" id="photoInput" class="file-input" accept="image/*">
+          <label for="photoInput" class="file-btn">📷 Загрузить фото</label>
+          <button class="file-btn" id="removePhoto" style="margin-top:8px;display:none">✕ Убрать фото</button>
+        </div>
+
+        <div class="ctrl-group">
+          <div class="ctrl-label">Надпись</div>
+          <input type="text" id="textInput" class="txt-input" placeholder="Например: Iconic" maxlength="20">
+          <div class="fonts" style="margin-top:10px">
+            <button class="font-btn active" data-font="'Georgia', serif">Курсив</button>
+            <button class="font-btn" data-font="'Arial Black', sans-serif">Жирный</button>
+            <button class="font-btn" data-font="'Courier New', monospace">Печатный</button>
+          </div>
+        </div>
+
+        <div class="ctrl-group">
+          <div class="ctrl-label">Модель iPhone</div>
+          <select class="sel" id="modelSelect">
+            <option value="iPhone 11">iPhone 11</option>
+            <option value="iPhone 12">iPhone 12</option>
+            <option value="iPhone 13">iPhone 13</option>
+            <option value="iPhone 14">iPhone 14</option>
+            <option value="iPhone 15" selected>iPhone 15 / 15 Pro</option>
+            <option value="iPhone 16">iPhone 16</option>
+          </select>
+        </div>
+
+        <div class="price-row">
+          <span>Итого</span>
+          <div class="price"><span id="price">1 500</span> ₽</div>
+        </div>
+
+        <button class="btn" style="width:100%;margin-top:16px" onclick="scrollToOrder()">Оформить этот дизайн</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ПРЕИМУЩЕСТВА -->
+<section>
+  <div class="container">
+    <h2 class="section-title">Почему GAD</h2>
+    <p class="section-sub">Мы делаем чехлы, которые хочется показывать.</p>
+    <div class="features">
+      <div class="feature"><div class="feature-icon">🎨</div><h3>Твой дизайн</h3><p>Собери прямо на сайте или пришли идею — доведём до идеала бесплатно.</p></div>
+      <div class="feature"><div class="feature-icon">⚡</div><h3>3 дня</h3><p>Стандарт — 3 рабочих дня. Срочно — за 24 часа.</p></div>
+      <div class="feature"><div class="feature-icon">💎</div><h3>Стойкая печать</h3><p>УФ-печать не стирается, не выцветает и не боится воды.</p></div>
+      <div class="feature"><div class="feature-icon">📦</div><h3>Доставка по РФ</h3><p>СДЭК, Почта, курьер по Москве. Подарочная упаковка — бесплатно.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ЗАКАЗ -->
+<section id="order">
+  <div class="container">
+    <h2 class="section-title">Оформить заказ</h2>
+    <p class="section-sub">Заявка уйдёт прямо в Telegram — ответим в течение 15 минут.</p>
+
+    <div class="order-grid">
+      <form class="order-form" id="orderForm">
+        <div>
+          <label for="fName">Имя</label>
+          <input id="fName" name="name" type="text" required placeholder="Как к вам обращаться">
+        </div>
+        <div>
+          <label for="fContact">Телефон или @telegram</label>
+          <input id="fContact" name="contact" type="text" required placeholder="+7 900 000-00-00">
+        </div>
+        <div>
+          <label for="fModel">Модель iPhone</label>
+          <select id="fModel" name="model"></select>
+        </div>
+        <div>
+          <label for="fComment">Комментарий к дизайну</label>
+          <textarea id="fComment" name="comment" placeholder="Опишите идею, пришлём макет на согласование"></textarea>
+        </div>
+        <input type="hidden" id="fDesign" name="design">
+        <button type="submit" class="btn">Отправить в Telegram</button>
+        <div id="formStatus" style="font-size:.88rem;color:var(--muted);text-align:center"></div>
+      </form>
+
+      <div class="contact-info">
+        <div class="contact-item"><small>Telegram</small><div>@gad_cases</div></div>
+        <div class="contact-item"><small>WhatsApp</small><div>+7 (900) 123-45-67</div></div>
+        <div class="contact-item"><small>Email</small><div>hello@gad.cases</div></div>
+        <div class="contact-item"><small>Instagram</small><div>@gad.cases</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">© 2026 GAD · Индивидуальные чехлы для iPhone</div>
+</footer>
+
+<script>
+/* ============== КОНСТРУКТОР ============== */
+const COLORS = [
+  {name:'Белый',   value:'#ffffff', dots:'#111'},
+  {name:'Чёрный',  value:'#111114', dots:'#eee'},
+  {name:'Пудра',   value:'#f4d7dd', dots:'#8a5a68'},
+  {name:'Розовый', value:'#ff8fb1', dots:'#fff'},
+  {name:'Лаванда', value:'#c9b7e8', dots:'#5a4a75'},
+  {name:'Мята',    value:'#b6e3d4', dots:'#2e6b5a'},
+  {name:'Бежевый', value:'#ead7c0', dots:'#8b6b47'},
+  {name:'Красный', value:'#e63946', dots:'#fff'},
+  {name:'Синий',   value:'#2b3a67', dots:'#f5c94c'},
+  {name:'Шоколад', value:'#4a2c2a', dots:'#e8cfc0'},
+];
+
+const PRINTS = [
+  {id:'none',   label:'Без принта'},
+  {id:'dots',   label:'Горошек'},
+  {id:'stripes',label:'Полоски'},
+  {id:'checks', label:'Клетка'},
+  {id:'leo',    label:'Леопард'},
+  {id:'hearts', label:'Сердечки'},
+];
+
+const state = {
+  color: COLORS[0],
+  print: 'none',
+  photo: null,
+  text: '',
+  font: "'Georgia', serif",
+  model: 'iPhone 15 / 15 Pro',
+};
+
+// рендер свотчей
+const swWrap = document.getElementById('swatches');
+COLORS.forEach((c,i)=>{
+  const el = document.createElement('div');
+  el.className = 'swatch' + (i===0?' active':'');
+  el.style.background = c.value;
+  el.title = c.name;
+  el.onclick = ()=>{
+    state.color = c;
+    document.querySelectorAll('.swatch').forEach(s=>s.classList.remove('active'));
+    el.classList.add('active');
+    updatePreview();
+  };
+  swWrap.appendChild(el);
+});
+
+// рендер принтов
+const prWrap = document.getElementById('prints');
+PRINTS.forEach((p,i)=>{
+  const el = document.createElement('button');
+  el.className = 'print' + (i===0?' active':'');
+  el.textContent = p.label;
+  el.onclick = ()=>{
+    state.print = p.id;
+    document.querySelectorAll('.print').forEach(s=>s.classList.remove('active'));
+    el.classList.add('active');
+    updatePreview();
+  };
+  prWrap.appendChild(el);
+});
+
+// шрифты
+document.querySelectorAll('.font-btn').forEach(b=>{
+  b.onclick = ()=>{
+    state.font = b.dataset.font;
+    document.querySelectorAll('.font-btn').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    updatePreview();
+  };
+});
+
+// фото
+const photoInput = document.getElementById('photoInput');
+const removeBtn  = document.getElementById('removePhoto');
+photoInput.onchange = (e)=>{
+  const f = e.target.files[0];
+  if(!f) return;
+  const r = new FileReader();
+  r.onload = ev => {
+    state.photo = ev.target.result;
+    removeBtn.style.display = 'block';
+    updatePreview();
+  };
+  r.readAsDataURL(f);
+};
+removeBtn.onclick = ()=>{
+  state.photo = null;
+  photoInput.value = '';
+  removeBtn.style.display = 'none';
+  updatePreview();
+};
+
+// текст
+document.getElementById('textInput').oninput = (e)=>{
+  state.text = e.target.value;
+  updatePreview();
+};
+
+// модель
+const modelSelect = document.getElementById('modelSelect');
+const fModel = document.getElementById('fModel');
+modelSelect.innerHTML = [...modelSelect.options].map(o=>o.outerHTML).join('');
+modelSelect.onchange = ()=>{ state.model = modelSelect.value; fModel.value = modelSelect.value; };
+fModel.innerHTML = modelSelect.innerHTML;
+fModel.value = modelSelect.value;
+
+/* ПАТТЕРНЫ ЧЕРЕЗ SVG */
+const SVG = {
+  dots: (c)=>`url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><circle cx='10' cy='10' r='3.5' fill='${encodeURIComponent(c)}'/><circle cx='30' cy='30' r='3.5' fill='${encodeURIComponent(c)}'/></svg>")`,
+  stripes: (c)=>`repeating-linear-gradient(45deg, transparent 0 14px, ${c} 14px 20px)`,
+  checks: (c)=>`repeating-linear-gradient(0deg, transparent 0 18px, ${c} 18px 20px), repeating-linear-gradient(90deg, transparent 0 18px, ${c} 18px 20px)`,
+  leo: ()=>`url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='90' height='90'><rect width='90' height='90' fill='%23d4a373'/><g fill='%23332'><ellipse cx='20' cy='22' rx='8' ry='6'/><ellipse cx='65' cy='55' rx='9' ry='7'/><ellipse cx='18' cy='70' rx='7' ry='6'/><ellipse cx='60' cy='15' rx='6' ry='5'/></g><g fill='none' stroke='%23332' stroke-width='2'><ellipse cx='20' cy='22' rx='11' ry='9'/><ellipse cx='65' cy='55' rx='12' ry='10'/><ellipse cx='18' cy='70' rx='10' ry='8'/><ellipse cx='60' cy='15' rx='9' ry='8'/></g></svg>")`,
+  hearts: (c)=>`url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='60' height='60'><path d='M30 45 C10 32 12 15 25 15 C28 15 30 18 30 18 C30 18 32 15 35 15 C48 15 50 32 30 45 Z' fill='${encodeURIComponent(c)}' transform='scale(0.7) translate(10,5)'/></svg>")`,
+};
+
+function updatePreview(){
+  const bg = document.getElementById('caseBg');
+  const ph = document.getElementById('casePhoto');
+  const tx = document.getElementById('caseText');
+
+  // фон
+  bg.style.background = state.color.value;
+  if(state.print !== 'none'){
+    if(state.print==='leo'){
+      bg.style.backgroundImage = SVG.leo();
+      bg.style.backgroundSize = '180px 180px';
+    } else {
+      const pat = SVG[state.print](state.color.dots);
+      bg.style.backgroundImage = pat;
+      bg.style.backgroundSize = state.print==='stripes'||state.print==='checks' ? 'auto' : '60px 60px';
+    }
+  } else {
+    bg.style.backgroundImage = 'none';
+  }
+
+  // фото
+  if(state.photo){
+    ph.style.backgroundImage = `url('${state.photo}')`;
+    ph.classList.add('on');
+  } else {
+    ph.classList.remove('on');
+  }
+
+  // текст
+  tx.textContent = state.text;
+  tx.style.fontFamily = state.font;
+  tx.style.color = state.color.dots;
+  tx.style.textShadow = '0 2px 8px rgba(0,0,0,.15)';
+
+  calcPrice();
+  updateDesignString();
+}
+
+function calcPrice(){
+  let p = 1500;
+  if(state.print !== 'none') p += 200;
+  if(state.photo) p += 300;
+  if(state.text.trim()) p += 150;
+  document.getElementById('price').textContent = p.toLocaleString('ru-RU');
+}
+
+function updateDesignString(){
+  const parts = [
+    `Основа: ${state.color.name}`,
+    `Принт: ${PRINTS.find(x=>x.id===state.print).label}`,
+    state.photo ? 'Фото: загружено' : null,
+    state.text ? `Надпись: "${state.text}"` : null,
+    `Модель: ${state.model}`,
+  ].filter(Boolean);
+  document.getElementById('fDesign').value = parts.join(' · ');
+  fModel.value = state.model;
+}
+
+function scrollToOrder(){
+  document.getElementById('order').scrollIntoView({behavior:'smooth'});
+}
+
+/* ============== ОТПРАВКА В TELEGRAM ============== */
+// Укажи здесь URL своего бэкенда (см. файл bot.py)
+const API_URL = '/order';
+
+document.getElementById('orderForm').onsubmit = async function(e){
+  e.preventDefault();
+  const status = document.getElementById('formStatus');
+  status.textContent = 'Отправляем…';
+
+  const payload = {
+    name: document.getElementById('fName').value,
+    contact: document.getElementById('fContact').value,
+    model: document.getElementById('fModel').value,
+    comment: document.getElementById('fComment').value,
+    design: document.getElementById('fDesign').value,
+    price: document.getElementById('price').textContent + ' ₽',
+  };
+
+  try{
+    const r = await fetch(API_URL, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(payload),
+    });
+    if(r.ok){
+      status.textContent = '✓ Заявка отправлена! Скоро свяжемся.';
+      status.style.color = '#7dd3a0';
+      this.reset();
+    } else {
+      throw new Error('server error');
+    }
+  } catch(err){
+    status.textContent = '⚠ Не удалось отправить. Напишите нам в Telegram @gad_cases';
+    status.style.color = '#ff8fb1';
+  }
+};
+
+updatePreview();
+</script>
+</body>
+</html>
